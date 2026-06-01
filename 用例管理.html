@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>用例管理</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f0f2f5;
+        }
+        .header {
+            background-color: #fff;
+            border-bottom: 1px solid #e8e8e8;
+            padding: 0 24px;
+            height: 56px;
+            display: flex;
+            align-items: center;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .logo {
+            font-size: 18px;
+            font-weight: 600;
+            color: #1890ff;
+        }
+        .nav {
+            display: flex;
+            margin-left: 50px;
+            height: 100%;
+        }
+        .nav-item {
+            padding: 0 20px;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+            color: #666;
+            border-bottom: 2px solid transparent;
+        }
+        .nav-item:hover {
+            color: #1890ff;
+        }
+        .nav-item.active {
+            color: #1890ff;
+            border-bottom-color: #1890ff;
+        }
+        .main-container {
+            display: flex;
+            padding: 24px;
+            gap: 24px;
+        }
+        .sidebar {
+            width: 200px;
+            background-color: #fff;
+            border-radius: 4px;
+            padding: 12px 0;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .sidebar-item {
+            padding: 12px 24px;
+            cursor: pointer;
+            color: #666;
+            transition: all 0.3s;
+        }
+        .sidebar-item:hover {
+            color: #1890ff;
+            background-color: #e6f7ff;
+        }
+        .sidebar-item.active {
+            color: #1890ff;
+            background-color: #e6f7ff;
+            border-right: 3px solid #1890ff;
+        }
+        .content {
+            flex: 1;
+            background-color: #fff;
+            border-radius: 4px;
+            padding: 24px;
+            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
+        }
+        .page-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 24px;
+        }
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+            color: #333;
+        }
+        .filter-section {
+            background-color: #fafafa;
+            padding: 20px;
+            border-radius: 4px;
+            margin-bottom: 24px;
+        }
+        .filter-form {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 16px;
+            align-items: end;
+        }
+        .form-group {
+            display: flex;
+            flex-direction: column;
+        }
+        .form-group label {
+            font-size: 14px;
+            color: #666;
+            margin-bottom: 8px;
+        }
+        .form-group input, .form-group select {
+            padding: 8px 12px;
+            border: 1px solid #d9d9d9;
+            border-radius: 4px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+        .form-group input:focus, .form-group select:focus {
+            outline: none;
+            border-color: #1890ff;
+            box-shadow: 0 0 0 2px rgba(24,144,255,0.2);
+        }
+        .btn-group {
+            display: flex;
+            gap: 12px;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        .btn-primary {
+            background-color: #1890ff;
+            color: #fff;
+        }
+        .btn-primary:hover {
+            background-color: #40a9ff;
+        }
+        .btn-default {
+            background-color: #fff;
+            color: #666;
+            border: 1px solid #d9d9d9;
+        }
+        .btn-default:hover {
+            color: #1890ff;
+            border-color: #1890ff;
+        }
+        .btn-success {
+            background-color: #52c41a;
+            color: #fff;
+        }
+        .btn-success:hover {
+            background-color: #73d13d;
+        }
+        .btn-danger {
+            background-color: #ff4d4f;
+            color: #fff;
+        }
+        .btn-danger:hover {
+            background-color: #ff7875;
+        }
+        .table-container {
+            overflow-x: auto;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 14px 16px;
+            text-align: left;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        th {
+            background-color: #fafafa;
+            font-weight: 600;
+            color: #333;
+        }
+        td {
+            color: #666;
+        }
+        tr:hover {
+            background-color: #f5f5f5;
+        }
+        .tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        .tag-blue {
+            background-color: #e6f7ff;
+            border: 1px solid #91d5ff;
+            color: #1890ff;
+        }
+        .tag-green {
+            background-color: #f6ffed;
+            border: 1px solid #b7eb8f;
+            color: #52c41a;
+        }
+        .tag-orange {
+            background-color: #fff7e6;
+            border: 1px solid #ffd591;
+            color: #fa8c16;
+        }
+        .action-btn {
+            padding: 4px 8px;
+            margin-right: 8px;
+            font-size: 12px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            margin-top: 24px;
+            gap: 8px;
+        }
+        .pagination-btn {
+            padding: 6px 12px;
+            border: 1px solid #d9d9d9;
+            background-color: #fff;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .pagination-btn.active {
+            background-color: #1890ff;
+            color: #fff;
+            border-color: #1890ff;
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        .modal.active {
+            display: flex;
+        }
+        .modal-content {
+            background-color: #fff;
+            border-radius: 4px;
+            width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        .modal-header {
+            padding: 16px 24px;
+            border-bottom: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .modal-header h3 {
+            font-size: 16px;
+            color: #333;
+        }
+        .modal-close {
+            cursor: pointer;
+            font-size: 20px;
+            color: #999;
+        }
+        .modal-body {
+            padding: 24px;
+        }
+        .modal-footer {
+            padding: 16px 24px;
+            border-top: 1px solid #f0f0f0;
+            display: flex;
+            justify-content: flex-end;
+            gap: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="logo">测试管理系统</div>
+        <div class="nav">
+            <div class="nav-item">首页</div>
+            <div class="nav-item active">用例管理</div>
+            <div class="nav-item">测试计划</div>
+            <div class="nav-item">缺陷管理</div>
+            <div class="nav-item">系统设置</div>
+        </div>
+    </div>
+
+    <div class="main-container">
+        <div class="sidebar">
+            <div class="sidebar-item">用例库</div>
+            <div class="sidebar-item active">用例管理</div>
+            <div class="sidebar-item">用例导入</div>
+            <div class="sidebar-item">用例导出</div>
+        </div>
+
+        <div class="content">
+            <div class="page-header">
+                <div class="page-title">用例管理</div>
+                <button class="btn btn-success" onclick="showModal('add')">+ 新增用例</button>
+            </div>
+
+            <div class="filter-section">
+                <div class="filter-form">
+                    <div class="form-group">
+                        <label>用例编号</label>
+                        <input type="text" placeholder="请输入用例编号" id="filterCode">
+                    </div>
+                    <div class="form-group">
+                        <label>用例名称</label>
+                        <input type="text" placeholder="请输入用例名称" id="filterName">
+                    </div>
+                    <div class="form-group">
+                        <label>标签</label>
+                        <select id="filterTag">
+                            <option value="">全部</option>
+                            <option value="冒烟测试">冒烟测试</option>
+                            <option value="回归测试">回归测试</option>
+                            <option value="功能测试">功能测试</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="btn-group">
+                            <button class="btn btn-primary" onclick="search()">查询</button>
+                            <button class="btn btn-default" onclick="reset()">重置</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>序号</th>
+                            <th>用例编码</th>
+                            <th>用例名称</th>
+                            <th>标签</th>
+                            <th>适用车型</th>
+                            <th>创建人</th>
+                            <th>创建时间</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tableBody">
+                        <tr>
+                            <td>1</td>
+                            <td>TC001</td>
+                            <td>用户登录功能测试</td>
+                            <td><span class="tag tag-blue">冒烟测试</span></td>
+                            <td>M7</td>
+                            <td>张三</td>
+                            <td>2026-05-30</td>
+                            <td>
+                                <button class="btn btn-primary action-btn" onclick="showModal('edit')">编辑</button>
+                                <button class="btn btn-danger action-btn" onclick="deleteCase()">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>TC002</td>
+                            <td>数据查询功能测试</td>
+                            <td><span class="tag tag-green">回归测试</span></td>
+                            <td>M7</td>
+                            <td>李四</td>
+                            <td>2026-05-29</td>
+                            <td>
+                                <button class="btn btn-primary action-btn" onclick="showModal('edit')">编辑</button>
+                                <button class="btn btn-danger action-btn" onclick="deleteCase()">删除</button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>3</td>
+                            <td>TC003</td>
+                            <td>接口调用功能测试</td>
+                            <td><span class="tag tag-orange">功能测试</span></td>
+                            <td>M7</td>
+                            <td>王五</td>
+                            <td>2026-05-28</td>
+                            <td>
+                                <button class="btn btn-primary action-btn" onclick="showModal('edit')">编辑</button>
+                                <button class="btn btn-danger action-btn" onclick="deleteCase()">删除</button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="pagination">
+                <button class="pagination-btn">上一页</button>
+                <button class="pagination-btn active">1</button>
+                <button class="pagination-btn">2</button>
+                <button class="pagination-btn">3</button>
+                <button class="pagination-btn">下一页</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增/编辑模态框 -->
+    <div class="modal" id="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="modalTitle">新增用例</h3>
+                <span class="modal-close" onclick="hideModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>用例编码 <span style="color: red;">*</span></label>
+                    <input type="text" placeholder="请输入用例编码" style="width: 100%;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>用例名称 <span style="color: red;">*</span></label>
+                    <input type="text" placeholder="请输入用例名称" style="width: 100%;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>标签</label>
+                    <select style="width: 100%;">
+                        <option value="">请选择标签</option>
+                        <option value="冒烟测试">冒烟测试</option>
+                        <option value="回归测试">回归测试</option>
+                        <option value="功能测试">功能测试</option>
+                    </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>适用车型</label>
+                    <input type="text" placeholder="请输入适用车型" style="width: 100%;">
+                </div>
+                <div class="form-group" style="margin-bottom: 16px;">
+                    <label>用例描述</label>
+                    <textarea placeholder="请输入用例描述" style="width: 100%; height: 100px; padding: 8px; border: 1px solid #d9d9d9; border-radius: 4px;"></textarea>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-default" onclick="hideModal()">取消</button>
+                <button class="btn btn-primary" onclick="save()">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function showModal(type) {
+            document.getElementById('modal').classList.add('active');
+            document.getElementById('modalTitle').textContent = type === 'add' ? '新增用例' : '编辑用例';
+        }
+
+        function hideModal() {
+            document.getElementById('modal').classList.remove('active');
+        }
+
+        function save() {
+            alert('保存成功！');
+            hideModal();
+        }
+
+        function deleteCase() {
+            if (confirm('确定要删除这条用例吗？')) {
+                alert('删除成功！');
+            }
+        }
+
+        function search() {
+            alert('查询功能演示');
+        }
+
+        function reset() {
+            document.getElementById('filterCode').value = '';
+            document.getElementById('filterName').value = '';
+            document.getElementById('filterTag').value = '';
+        }
+    </script>
+</body>
+</html>
